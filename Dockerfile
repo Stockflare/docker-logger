@@ -1,0 +1,45 @@
+FROM ubuntu:trusty
+MAINTAINER David Kellet <david@stockflare.com>
+
+ENV DEBIAN_FRONTEND noninteractive
+
+ENV CONFD_VERSION 0.10.0
+
+ENV AWS_REGION us-east-1
+
+ENV CLOUDWATCH_LOG_GROUP default
+
+ENV LOG_LOCATION /var/log/cloudwatch.log
+
+WORKDIR /aws
+
+RUN apt-get -q update && \
+    apt-get -y -q dist-upgrade && \
+    apt-get -y -q install rsyslog python-setuptools python-pip curl wget
+
+RUN sed -i "s/#\$ModLoad imudp/\$ModLoad imudp/" /etc/rsyslog.conf && \
+    sed -i "s/#\$UDPServerRun 514/\$UDPServerRun 514/" /etc/rsyslog.conf && \
+    sed -i "s/#\$ModLoad imtcp/\$ModLoad imtcp/" /etc/rsyslog.conf && \
+    sed -i "s/#\$InputTCPServerRun 514/\$InputTCPServerRun 514/" /etc/rsyslog.conf
+
+RUN sed -i "s/authpriv.none/authpriv.none,local6.none,local7.none/" /etc/rsyslog.d/50-default.conf
+
+RUN echo "if \$syslogfacility-text == 'local6' then ${LOG_LOCATION}" >> /etc/rsyslog.d/http.conf && \
+	  echo "if \$syslogfacility-text == 'local6' then ~" >> /etc/rsyslog.d/http.conf
+
+RUN wget --progress=bar:force --retry-connrefused -t 5 https://github.com/kelseyhightower/confd/releases/download/v${CONFD_VERSION}/confd-${CONFD_VERSION}-linux-amd64 -O /bin/confd && \
+    chmod +x /bin/confd
+
+ADD etc/confd /etc/confd
+
+RUN pip install supervisor
+
+RUN curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -o awslogs-agent-setup.py
+
+RUN touch /aws/logs.conf && python awslogs-agent-setup.py -n -r ${AWS_REGION} -c /aws/logs.conf
+
+ADD boot boot
+
+EXPOSE 514/tcp 514/udp
+
+CMD ["./boot"]

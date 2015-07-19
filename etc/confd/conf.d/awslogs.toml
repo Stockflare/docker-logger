@@ -1,0 +1,5 @@
+[template]
+src = "awslogs.conf.tmpl"
+dest = "/aws/logs.conf"
+mode = "0644"
+keys = []
