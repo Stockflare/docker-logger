@@ -34,8 +34,6 @@ ADD etc/confd /etc/confd
 
 RUN pip install supervisor
 
-USER supervisor
-
 RUN curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -o awslogs-agent-setup.py
 
 RUN touch ${LOG_LOCATION} && chmod 777 ${LOG_LOCATION}
