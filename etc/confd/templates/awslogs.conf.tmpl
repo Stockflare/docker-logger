@@ -1,18 +1,14 @@
 [general]
 state_file = /var/awslogs/state/agent-state
 
-[{{getenv "LOG_LOCATION"}}]
+[/var/log/cloudwatch.log]
 datetime_format = %Y-%m-%d %H:%M:%S
-file = {{getenv "LOG_LOCATION"}}
-buffer_duration = 5000
-log_stream_name = {instance_id}-{hostname}-{ip_address}-log.log
-initial_position = start_of_file
+file = /var/log/cloudwatch.log
+log_stream_name = {instance_id}/{hostname}/access.log
 log_group_name = {{getenv "CLOUDWATCH_LOG_GROUP"}}
 
 [/var/log/supervisord.log]
 datetime_format = %Y-%m-%d %H:%M:%S
 file = /var/log/supervisord.log
-buffer_duration = 5000
-log_stream_name = {instance_id}-{hostname}-{ip_address}-logger-supervisord.log
-initial_position = start_of_file
+log_stream_name = {instance_id}/{hostname}/supervisord.log
 log_group_name = {{getenv "CLOUDWATCH_LOG_GROUP"}}
