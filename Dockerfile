@@ -1,5 +1,5 @@
 FROM ubuntu:trusty
-MAINTAINER David Kellet <david@stockflare.com>
+MAINTAINER David Kelley <david@stockflare.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -34,9 +34,11 @@ ADD etc/confd /etc/confd
 
 RUN pip install supervisor
 
+USER supervisor
+
 RUN curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -o awslogs-agent-setup.py
 
-RUN touch /aws/logs.conf && python awslogs-agent-setup.py -n -r ${AWS_REGION} -c /aws/logs.conf
+RUN touch ${LOG_LOCATION} && chmod 777 ${LOG_LOCATION}
 
 ADD boot boot
 

@@ -1,8 +1,12 @@
 [supervisord]
-nodaemon=false
+nodaemon=true
+logfile=/var/log/supervisord.log
+logfile_maxbytes=6MB
+logfile_backups=0
+loglevel=info
 
 [program:rsyslogd]
 command=/usr/sbin/rsyslogd -n
 
 [program:awslogs]
-command=/bin/bash -c "/usr/bin/env -i AWS_CONFIG_FILE=/var/awslogs/etc/aws.conf HOME=/root /var/awslogs/bin/aws logs push --config-file /aws/logs.conf"
+command=/bin/bash -c "/usr/bin/env -i AWS_CONFIG_FILE=/var/awslogs/etc/aws.conf HOME=/root /var/awslogs/bin/aws logs push --config-file /var/awslogs/etc/awslogs.conf"

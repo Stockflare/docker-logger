@@ -8,3 +8,11 @@ buffer_duration = 5000
 log_stream_name = {instance_id}-{hostname}-{ip_address}-log.log
 initial_position = start_of_file
 log_group_name = {{getenv "CLOUDWATCH_LOG_GROUP"}}
+
+[/var/log/supervisord.log]
+datetime_format = %Y-%m-%d %H:%M:%S
+file = /var/log/supervisord.log
+buffer_duration = 5000
+log_stream_name = {instance_id}-{hostname}-{ip_address}-logger-supervisord.log
+initial_position = start_of_file
+log_group_name = {{getenv "CLOUDWATCH_LOG_GROUP"}}

@@ -2,6 +2,4 @@
 src = "supervisord.conf.tmpl"
 dest = "/usr/local/etc/supervisord.conf"
 mode = "0644"
-keys = [
-  "/nginx",
-]
+keys = []
